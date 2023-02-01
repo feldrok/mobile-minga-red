@@ -1,11 +1,11 @@
 import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { API_URL } from '@env'
+import { API_URL, TOKEN } from '@env'
 
 let config = {
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYzVhNzJlMzM5NWFkYzcxNzRjZWE2MCIsImlhdCI6MTY3NTI2MzE4NSwiZXhwIjoxNjc1MzQ5NTg1fQ.fxosqStbtEa0QZ-U0VtzCGmuVOcUJFAi2pCEJNogvaA`,
+        Authorization: `Bearer ${TOKEN}`,
     },
 }
 
