@@ -1,8 +1,6 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit"
-
 import axios from "axios"
-
-const API_URL = process.env.REACT_APP_API_URL
+import { API_URL } from '@env'
 
 let config = {
     headers: {
@@ -13,7 +11,7 @@ let config = {
 
 const getCategories = createAsyncThunk("getCategories", async () => {
     try {
-        let response = await axios.get(`http://192.168.4.29:8000/api/categories`, config)
+        let response = await axios.get(`${API_URL}/api/categories`, config)
         return {
             response: { categories: response.data },
             message: "Categories obtained",

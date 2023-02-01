@@ -1,17 +1,18 @@
 import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import { API_URL } from '@env'
 
 let config = {
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYzVhNzJkMzM5NWFkYzcxNzRjZWE1MyIsImlhdCI6MTY3NTEwNDc0OCwiZXhwIjoxNjc1MTkxMTQ4fQ.E62qCYL4I8tBfB0t53P3i5gxmdGUJrFHF-MjtdivE3E`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYzVhNzJlMzM5NWFkYzcxNzRjZWE2MCIsImlhdCI6MTY3NTI2MzE4NSwiZXhwIjoxNjc1MzQ5NTg1fQ.fxosqStbtEa0QZ-U0VtzCGmuVOcUJFAi2pCEJNogvaA`,
     },
 }
 
 const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "", category_id = "" }) => {
     try {
         let response = await axios.get(
-            `http://192.168.4.29:8000/api/comics?title=${title}&category_id=${category_id}&limit=${limit}`,
+            `${API_URL}/api/comics?title=${title}&category_id=${category_id}&limit=${limit}`,
             config
         )
         return {
@@ -29,7 +30,7 @@ const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "",
 
 const getFavouriteComics = createAsyncThunk(
     "getFavouriteComics",
-    async ({ user_id, limit, category_id, order, title }) => {
+    async ({ user_id, limit, category_id, order, title = "" }) => {
         if (limit === undefined) {
             limit = 4
         }
@@ -41,7 +42,7 @@ const getFavouriteComics = createAsyncThunk(
         }
         try {
             let response = await axios.get(
-                `http://192.168.4.29:8000/api/reactions/favourites/${user_id}?title=${title}&category_id=${category_id}&limit=${limit}&order=${order}`,
+                `${API_URL}/api/reactions/favourites/${user_id}?title=${title}&category_id=${category_id}&limit=${limit}&order=${order}`,
                 config
             )
             return {
@@ -52,7 +53,6 @@ const getFavouriteComics = createAsyncThunk(
                 message: "Comics obtained",
             }
         } catch (error) {
-            console.log(error)
             return {
                 response: { comics: error.response.data },
                 limit: limit,
