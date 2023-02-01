@@ -2,16 +2,19 @@ import { createAction, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
 import { API_URL, TOKEN } from '@env'
 
-let config = {
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${TOKEN}`,
-    },
+const handleToken = () => {
+    let config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TOKEN}`,
+        },
+    }
+    return config
 }
 
 const getCategories = createAsyncThunk("getCategories", async () => {
     try {
-        let response = await axios.get(`${API_URL}/api/categories`, config)
+        let response = await axios.get(`${API_URL}/api/categories`, handleToken())
         return {
             response: { categories: response.data },
             message: "Categories obtained",
