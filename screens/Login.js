@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from "reac
 import React from "react"
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable"
 
-export default function Login() {
+export default function Login({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>

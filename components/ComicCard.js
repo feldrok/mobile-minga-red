@@ -1,21 +1,54 @@
 import { View, Text, StyleSheet, Image } from "react-native"
 import React from "react"
+import { useSelector } from "react-redux"
+import { TouchableOpacity } from "react-native-gesture-handler"
 
-export default function ComicCard({ title, category, image }) {
-    const categoryColor = category === "Shonen" ? "#EF8481" : category === "Seinen" ? "#FC9C57" : category === "Shoujo" ? "#00BA88" : category === "Marvel" ? "#18a0ff" : "#8883F0"
-    
+export default function ComicCard({ title, category, image, color, navigation }) {
+    const storeCategories = useSelector((state) => state.categories)
+    const storeComics = useSelector((state) => state.comics)
+
+    const renderCategoryType = () => {
+        if (storeComics.comics?.response?.length === 0) {
+            return (
+                <Text>
+                    {storeCategories.activeCategory}
+                </Text>
+            )
+        } else {
+            return storeCategories.categories?.response?.map((item) => {
+                if (item._id === category) {
+                    return (
+                        <Text key={item._id} style={{ color: color }}>
+                            {item.name}
+                        </Text>
+                    )
+                } else {
+                    return null
+                }
+            })
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <View style={[styles.leftContainer, { borderLeftColor: categoryColor } ]}>
-                <Text style={styles.title}>
-                    {title}
-                </Text>
-                <Text style={[styles.category, { color: categoryColor }]}>
-                    {category}
-                </Text>
+            <View
+                style={[
+                    styles.leftContainer,
+                    { borderLeftColor: color },
+                ]}
+            >
+                <Text style={styles.title}>{title}</Text>
+                {renderCategoryType()}
+                <View>
+                    <TouchableOpacity styles={styles.deleteButton}>
+                        <Text style={styles.deleteText}>
+                            Delete
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.rightContainer}>
-                <Image source={image} style={styles.cover} />
+                <Image source={{ uri: `${image}` }} style={styles.image} />
             </View>
         </View>
     )
@@ -67,5 +100,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
         marginTop: 10,
-    }
+    },
+    image: {
+        width: 180,
+        height: "100%",
+    },
+    deleteButton: {
+        backgroundColor: "red",
+    },
+    deleteText: {
+        color: "white",
+        fontWeight: "bold",
+    },
 })

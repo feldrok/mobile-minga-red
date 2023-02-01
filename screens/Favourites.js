@@ -5,76 +5,56 @@ import {
     StyleSheet,
     ImageBackground,
     TextInput,
-    ScrollView,
-    TouchableOpacity,
+    SafeAreaView,
 } from "react-native"
 import { Icon } from "@rneui/themed"
-import React from "react"
-import CategoryFilters from "../components/CategoryFilters"
-import ComicCard from "../components/ComicCard"
+import React, { useEffect } from "react"
+import BottomContainer from "../components/BottomContainer"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { useDispatch, useSelector } from "react-redux"
+import comicActions from "../store/comics/actions"
 
-const comics = [
-    {
-        id: 1,
-        title: "Naruto",
-        category: "Seinen",
-        image: require("../assets/comic1.png"),
-    },
-    {
-        id: 2,
-        title: "My Hero Academia",
-        category: "Shonen",
-        image: require("../assets/comic2.png"),
-    },
-    {
-        id: 3,
-        title: "Jujutsu Kaisen",
-        category: "Shojo",
-        image: require("../assets/comic3.png"),
+const { getFavouriteComics } = comicActions
+
+export default function Favourites({ navigation }) {
+    const [text, setText] = React.useState("")
+    const storeCategories = useSelector((state) => state.categories)
+    const dispatch = useDispatch()
+
+    const filterComics = () => {
+        dispatch(
+            getFavouriteComics({
+                user_id: "63c5a72e3395adc7174cea60",
+                limit: 4,
+                title: text,
+                category_id: storeCategories.activeCategory !== "all" ? storeCategories.activeCategory : "",
+            })
+        )
     }
-]
 
-export default function Favourites() {
     return (
-        <>
-            <View style={styles.container}>
-                <ImageBackground
-                    source={require("../assets/favouritesBg.png")}
-                    style={styles.background}
-                >
-                    <Text style={styles.headerText}>Favourites</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon name="search" size={30} color="#4338CA" />
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Find your favourite manga"
-                        />
-                    </View>
-                </ImageBackground>
-            </View>
-            <View style={styles.bottomContainer}>
-                <View style={styles.buttonsContainer}>
-                    <CategoryFilters />
-                    <TouchableOpacity style={styles.filterButton}>
-                        <Icon name="sort" size={30} color="#4338CA" />
-                    </TouchableOpacity>
-                </View>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                >
-                    {
-                        comics.map((comic) => (
-                            <ComicCard
-                                key={comic.id}
-                                title={comic.title}
-                                category={comic.category}
-                                image={comic.image}
+        <SafeAreaView>
+            <GestureHandlerRootView>
+                <View style={styles.container}>
+                    <ImageBackground
+                        source={require("../assets/favouritesBg.png")}
+                        style={styles.background}
+                    >
+                        <Text style={styles.headerText}>Favourites</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name="search" size={30} color="#4338CA" />
+                            <TextInput
+                                onChangeText={(text) => setText(text)}
+                                onSubmitEditing={filterComics}
+                                style={styles.searchInput}
+                                placeholder="Find your favourite manga"
                             />
-                        ))
-                    }
-                </ScrollView>
-            </View>
-        </>
+                        </View>
+                    </ImageBackground>
+                    <BottomContainer />
+                </View>
+            </GestureHandlerRootView>
+        </SafeAreaView>
     )
 }
 
@@ -86,20 +66,18 @@ const styles = StyleSheet.create({
     background: {
         width: "100%",
         height: "100%",
-        justifyContent: "center",
         alignItems: "center",
         resizeMode: "cover",
         alignItems: "center",
         width: "100%",
         height: "100%",
-        position: "absolute",
-        top: 0,
     },
     headerText: {
         fontSize: 30,
         fontWeight: "bold",
         color: "white",
         margin: 20,
+        paddingTop: 100,
     },
     inputContainer: {
         backgroundColor: "white",
@@ -117,27 +95,5 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         padding: 15,
         fontSize: 20,
-    },
-    bottomContainer: {
-        backgroundColor: "#EBEBEB",
-        alignItems: "center",
-        width: "100%",
-        height: 600,
-        position: "absolute",
-        top: 400,
-        borderTopLeftRadius: 70,
-        borderTopRightRadius: 70,
-    },
-    buttonsContainer: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-    },
-    filterButton: {
-        width: "20%",
-        position: "absolute",
-        right: 0,
     },
 })
