@@ -2,18 +2,21 @@ import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { API_URL, TOKEN } from '@env'
 
-let config = {
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${TOKEN}`,
-    },
+const handleToken = () => {
+    let config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TOKEN}`,
+        },
+    }
+    return config
 }
 
 const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "", category_id = "" }) => {
     try {
         let response = await axios.get(
             `${API_URL}/api/comics?title=${title}&category_id=${category_id}&limit=${limit}`,
-            config
+            handleToken()
         )
         return {
             response: { comics: response.data },
@@ -43,7 +46,7 @@ const getFavouriteComics = createAsyncThunk(
         try {
             let response = await axios.get(
                 `${API_URL}/api/reactions/favourites/${user_id}?title=${title}&category_id=${category_id}&limit=${limit}&order=${order}`,
-                config
+                handleToken()
             )
             return {
                 response: { comics: response.data },
