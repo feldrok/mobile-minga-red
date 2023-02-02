@@ -3,7 +3,6 @@ import {
     Image,
     TouchableHighlight,
     Dimensions,
-    Text,
 } from "react-native"
 import React from "react"
 
@@ -16,7 +15,7 @@ export default function Slide({ title, image, description }) {
                 style={styles.image}
                 imageStyle={{ borderRadius: 20 }}
             >
-                <Image source={image} style={styles.image} />
+                <Image source={{uri: image}} style={styles.image} />
             </TouchableHighlight>
         </>
     )

@@ -1,14 +1,28 @@
 import { View, Text, StyleSheet, Image } from "react-native"
 import React from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import reactionActions from "../store/reactions/actions"
 
-export default function ComicCard({ title, category, image, color, navigation }) {
+const { addReaction } = reactionActions
+
+export default function ComicCard({ title, category, image, color, comicId, navigation }) {
     const storeCategories = useSelector((state) => state.categories)
     const storeComics = useSelector((state) => state.comics)
+    const storeReactions = useSelector((state) => state.reactions)
+    const dispatch = useDispatch()
+
+    const handleRemove = async () => {
+        await dispatch(
+            addReaction({
+                comic_id: comicId,
+                name: "favourite",
+            })
+        )
+    }
 
     const renderCategoryType = () => {
-        if (storeComics.comics?.response?.length === 0) {
+        if (storeComics.favouriteComics?.response?.length === 0) {
             return (
                 <Text>
                     {storeCategories.activeCategory}
@@ -40,9 +54,9 @@ export default function ComicCard({ title, category, image, color, navigation })
                 <Text style={styles.title}>{title}</Text>
                 {renderCategoryType()}
                 <View>
-                    <TouchableOpacity styles={styles.deleteButton}>
+                    <TouchableOpacity style={styles.deleteButton} onPress={handleRemove}>
                         <Text style={styles.deleteText}>
-                            Delete
+                            Remove
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -87,10 +101,6 @@ const styles = StyleSheet.create({
     cover: {
         width: 180,
         height: "100%",
-        borderTopLeftRadius: 90,
-        borderBottomLeftRadius: 90,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
     },
     title: {
         fontSize: 20,
@@ -104,12 +114,21 @@ const styles = StyleSheet.create({
     image: {
         width: 180,
         height: "100%",
+        borderTopLeftRadius: 90,
+        borderBottomLeftRadius: 90,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
     },
     deleteButton: {
-        backgroundColor: "red",
+        backgroundColor: "#fbdddc",
+        width: 100,
+        borderRadius: 20,
+        padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
     },
     deleteText: {
-        color: "white",
+        color: "#ee8380",
         fontWeight: "bold",
     },
 })

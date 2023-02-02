@@ -1,8 +1,10 @@
 import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { API_URL, TOKEN } from '@env'
+import { API_URL } from '@env'
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
-const handleToken = () => {
+const handleToken = async () => {
+    const TOKEN = await AsyncStorage.getItem("token")
     let config = {
         headers: {
             "Content-Type": "application/json",
@@ -16,7 +18,7 @@ const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "",
     try {
         let response = await axios.get(
             `${API_URL}/api/comics?title=${title}&category_id=${category_id}&limit=${limit}`,
-            handleToken()
+            await handleToken()
         )
         return {
             response: { comics: response.data },
@@ -46,7 +48,7 @@ const getFavouriteComics = createAsyncThunk(
         try {
             let response = await axios.get(
                 `${API_URL}/api/reactions/favourites/${user_id}?title=${title}&category_id=${category_id}&limit=${limit}&order=${order}`,
-                handleToken()
+                await handleToken()
             )
             return {
                 response: { comics: response.data },

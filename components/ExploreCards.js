@@ -1,9 +1,7 @@
 import {
     Text,
     StyleSheet,
-    SectionList,
     ImageBackground,
-    View,
     Image,
 } from "react-native"
 import React from "react"

@@ -7,14 +7,30 @@ import {
     ScrollView,
     Dimensions,
 } from "react-native"
-import React from "react"
+import React, { useCallback } from "react"
 import ExploreCards from "../components/ExploreCards"
 import Carousel from "../components/Carousel"
+import { useFocusEffect } from "@react-navigation/native"
+import comicActions from "../store/comics/actions"
+import { useDispatch, useSelector } from "react-redux"
+
+const { getComics } = comicActions
 
 const height = Dimensions.get("window").height
 const width = Dimensions.get("window").width
 
 export default function Home({ navigation }) {
+    const storeUser = useSelector((state) => state.user)
+    const dispatch = useDispatch()
+
+    useFocusEffect(
+        useCallback(() => {
+            if (storeUser.isAuthenticated) {
+                dispatch(getComics({ limit: 5 }))
+            }
+        }, [storeUser])
+    )
+
     return (
         <ScrollView
             style={styles.scrollContainer}
@@ -39,15 +55,14 @@ export default function Home({ navigation }) {
                         ]}
                     >
                         <Text style={styles.announcementText}>
-                            Anunciamos nuestra próxima ronda de financiación.
-                            Leer más →
+                            We launched our new app!
                         </Text>
                     </Pressable>
                     <Text style={styles.title}>
-                        Tu tienda de comics favorita
+                        Your favourite manga in one place
                     </Text>
                     <Text style={styles.subtitle}>
-                        ¡Lee tus comics y mangas favoritos en cualquier lugar!
+                        Read anywhere and anytime
                     </Text>
                     <Pressable
                         style={({ pressed }) => [
@@ -58,8 +73,11 @@ export default function Home({ navigation }) {
                             },
                             styles.button,
                         ]}
+                        onPress={() => navigation.navigate("Favourites")}
                     >
-                        <Text style={styles.buttonText}>Empezar</Text>
+                        <Text style={styles.buttonText}>
+                            Start your journey
+                        </Text>
                     </Pressable>
                 </View>
             </ImageBackground>
@@ -68,8 +86,18 @@ export default function Home({ navigation }) {
                     <ExploreCards />
                 </View>
                 <View style={styles.trendingContainer}>
-                    <Text style={styles.trendingTitle}>Trending Manga</Text>
-                    <Carousel />
+                    {storeUser.isAuthenticated === true ? (
+                        <>
+                            <Text style={styles.trendingTitle}>
+                                Trending Manga
+                            </Text>
+                            <Carousel />
+                        </>
+                    ) : (
+                        <Text style={styles.trendingSubtitle}>
+                            Inicia sesión para ver los mangas más populares
+                        </Text>
+                    )}
                 </View>
             </View>
         </ScrollView>

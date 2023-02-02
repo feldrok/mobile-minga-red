@@ -1,8 +1,10 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
-import { API_URL, TOKEN } from '@env'
+import { API_URL } from '@env'
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
-const handleToken = () => {
+const handleToken = async () => {
+    const TOKEN = await AsyncStorage.getItem("token")
     let config = {
         headers: {
             "Content-Type": "application/json",
@@ -14,7 +16,7 @@ const handleToken = () => {
 
 const getCategories = createAsyncThunk("getCategories", async () => {
     try {
-        let response = await axios.get(`${API_URL}/api/categories`, handleToken())
+        let response = await axios.get(`${API_URL}/api/categories`, await handleToken())
         return {
             response: { categories: response.data },
             message: "Categories obtained",
