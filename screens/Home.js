@@ -64,23 +64,21 @@ export default function Home({ navigation }) {
                     <Text style={styles.subtitle}>
                         Read anywhere and anytime
                     </Text>
-                    {storeUser.isAuthenticated ? null : (
-                        <Pressable
-                            style={({ pressed }) => [
-                                {
-                                    backgroundColor: pressed
-                                        ? "rgba(67, 56, 170, 1)"
-                                        : "rgba(67, 56, 202, 1)",
-                                },
-                                styles.button,
-                            ]}
-                            onPress={() => navigation.navigate("Login")}
-                        >
-                            <Text style={styles.buttonText}>
-                                Start your journey
-                            </Text>
-                        </Pressable>
-                    )}
+                    <Pressable
+                        style={({ pressed }) => [
+                            {
+                                backgroundColor: pressed
+                                    ? "rgba(67, 56, 170, 1)"
+                                    : "rgba(67, 56, 202, 1)",
+                            },
+                            styles.button,
+                        ]}
+                        onPress={() => navigation.navigate("Favourites")}
+                    >
+                        <Text style={styles.buttonText}>
+                            Start your journey
+                        </Text>
+                    </Pressable>
                 </View>
             </ImageBackground>
             <View style={styles.bodyContainer}>

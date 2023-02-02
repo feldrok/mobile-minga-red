@@ -86,12 +86,6 @@ export default function Login({ navigation }) {
                     <Text style={styles.signUpText}> Sign up</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.footerText}>
-                <Text>Go back to</Text>
-                <TouchableOpacity>
-                    <Text style={styles.signUpText}> home page</Text>
-                </TouchableOpacity>
-            </View>
         </View>
     )
 }
@@ -110,7 +104,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 40,
         fontWeight: "medium",
-        color: "#1B6FA8",
+        color: "#4338CA",
     },
     subtitle: {
         fontSize: 20,
@@ -128,7 +122,7 @@ const styles = StyleSheet.create({
         width: 300,
     },
     button: {
-        backgroundColor: "#1B6FA8",
+        backgroundColor: "#4338CA",
         borderRadius: 10,
         padding: 15,
         margin: 10,
@@ -166,7 +160,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     signUpText: {
-        color: "#1B6FA8",
+        color: "#4338CA",
         fontWeight: "bold",
     },
 })

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 import userActions from "../store/user/actions"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useFocusEffect } from "@react-navigation/native"
+import { Image } from "react-native"
 
 const { signInToken, signOut } = userActions
 
@@ -34,9 +35,11 @@ export default function DrawerNavigation() {
         }
     }
 
-    useFocusEffect(useCallback(() => {
-        checkToken()
-    }, [storeUser]))
+    useFocusEffect(
+        useCallback(() => {
+            checkToken()
+        }, [storeUser])
+    )
 
     const handleSignOut = async () => {
         try {
@@ -70,8 +73,10 @@ export default function DrawerNavigation() {
         } else {
             return (
                 <>
-                    <Drawer.Screen name="Home" component={Home} />
-                    <Drawer.Screen name="Login" component={Login} />
+                    <Drawer.Screen
+                        name="Login"
+                        component={Login}
+                    />
                 </>
             )
         }
@@ -79,8 +84,21 @@ export default function DrawerNavigation() {
 
     return (
         <Drawer.Navigator
-            initialRouteName="Home"
+            initialRouteName="Login"
             drawerContent={(props) => <CustomDrawerContent {...props} />}
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: "#4338CA",
+                },
+                headerTintColor: "#fff",
+                headerRightContainerStyle: {
+                    marginRight: 10,
+                },
+                headerRight: () => (
+                    <Image source={require("../assets/logo.png")} />
+                ),
+                drawerIcon: () => null,
+            }}
         >
             {renderLoginNav()}
         </Drawer.Navigator>
