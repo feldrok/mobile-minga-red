@@ -23,6 +23,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { useDispatch, useSelector } from "react-redux"
 import comicActions from "../store/comics/actions"
+import { useFocusEffect } from "@react-navigation/native"
 
 const { getComics, getFavouriteComics } = comicActions
 
@@ -39,10 +40,12 @@ const colors = [
 ]
 
 export default function BottomContainer() {
+    const [sort, setSort] = React.useState(false)
     const storeCategories = useSelector((state) => state.categories)
     const storeComics = useSelector((state) => state.comics)
+    const storeUser = useSelector((state) => state.user)
+    const storeReactions = useSelector((state) => state.reactions)
     const dispatch = useDispatch()
-    const [sort, setSort] = React.useState(false)
 
     const translateY = useSharedValue(0)
     const context = useSharedValue({ y: 0 })
@@ -91,25 +94,25 @@ export default function BottomContainer() {
         }
     })
 
-    useEffect(() => {
-        scrollTo(-SCREEN_HEIGHT / 3)
-        if (storeComics.comics.length === 0) {
+    useFocusEffect(
+        useCallback(() => {
+            scrollTo(-SCREEN_HEIGHT / 3)
             dispatch(
                 getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
+                    user_id: storeUser.user?.response?.user?.id,
                     limit: 4,
                 })
             )
-        }
-    }, [])
+        }, [storeReactions.reaction])
+    )
 
     const handleLoadMore = () => {
-        const limit = storeComics.comics?.response?.length
+        const limit = storeComics.favouriteComics?.response?.length
         if (storeCategories.activeCategory === "all") {
             if (limit >= 4) {
                 dispatch(
                     getFavouriteComics({
-                        user_id: "63c5a72e3395adc7174cea60",
+                        user_id: storeUser.user?.response?.user?.id,
                         limit: limit + 4,
                         title: "",
                         category_id: "",
@@ -121,7 +124,7 @@ export default function BottomContainer() {
             if (limit >= 4) {
                 dispatch(
                     getFavouriteComics({
-                        user_id: "63c5a72e3395adc7174cea60",
+                        user_id: storeUser.user?.response?.user?.id,
                         limit: limit + 4,
                         title: "",
                         category_id: storeCategories.activeCategory,
@@ -149,7 +152,7 @@ export default function BottomContainer() {
             setSort(false)
             dispatch(
                 getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
+                    user_id: storeUser.user?.response?.user?.id,
                     limit: 4,
                     title: "",
                     category_id:
@@ -163,7 +166,7 @@ export default function BottomContainer() {
             setSort(true)
             dispatch(
                 getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
+                    user_id: storeUser.user?.response?.user?.id,
                     limit: 4,
                     title: "",
                     category_id:
@@ -193,7 +196,7 @@ export default function BottomContainer() {
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={storeComics.comics?.response}
+                data={storeComics.favouriteComics?.response}
                 contentContainerStyle={{
                     flexGrow: 1,
                     justifyContent: "flex-start",
@@ -208,6 +211,7 @@ export default function BottomContainer() {
                         category={item?.category_id}
                         image={item?.photo}
                         color={setCategoryColors(item?.category_id)}
+                        comicId={item?._id}
                     />
                 )}
                 onEndReached={handleLoadMore}

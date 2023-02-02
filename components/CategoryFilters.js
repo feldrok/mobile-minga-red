@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import React, { useEffect } from "react"
+import React, { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import categoryActions from "../store/categories/actions"
 import comicActions from "../store/comics/actions"
+import { useFocusEffect } from "@react-navigation/native"
 
 const { getCategories, setActiveCategory } = categoryActions
 const { getFavouriteComics } = comicActions
@@ -25,37 +26,57 @@ const textColors = [
 ]
 
 export default function CategoryFilters() {
+    const storeUser = useSelector((state) => state.user)
     const storeComics = useSelector((state) => state.comics)
     const storeCategories = useSelector((state) => state.categories)
     const dispatch = useDispatch()
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         dispatch(getCategories())
-    }, [])
+    }, []))
 
     const showAllComics = () => {
-        dispatch(getFavouriteComics({
-            user_id: "63c5a72e3395adc7174cea60",
-            limit: 10,
-            title: "",
-            category_id: "",
-        }))
+        dispatch(
+            getFavouriteComics({
+                user_id: storeUser.user?.response?.user?.id,
+                limit: 10,
+                title: "",
+                category_id: "",
+            })
+        )
         dispatch(setActiveCategory("all"))
     }
 
     const showComicsByCategory = (category_id) => {
-        dispatch(getFavouriteComics({
-            user_id: "63c5a72e3395adc7174cea60",
-            limit: 10,
-            title: storeComics.comics.activeSearch,
-            category_id: category_id,
-        }))
+        if (storeComics.activeSearch !== "") {
+            console.log(storeComics)
+            dispatch(
+                getFavouriteComics({
+                    user_id: storeUser.user?.response?.user?.id,
+                    limit: 10,
+                    title: storeComics.activeSearch,
+                    category_id: category_id,
+                })
+            )
+        } else {
+            dispatch(
+                getFavouriteComics({
+                    user_id: "63c5a72e3395adc7174cea60",
+                    limit: 10,
+                    title: "",
+                    category_id: category_id,
+                })
+            )
+        }
         dispatch(setActiveCategory(category_id))
     }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.categoryAll} onPress={showAllComics}>
+            <TouchableOpacity
+                style={styles.categoryAll}
+                onPress={showAllComics}
+            >
                 <Text style={styles.categoryText}>All</Text>
             </TouchableOpacity>
             {storeCategories.categories?.response?.map((category) => (

@@ -1,38 +1,17 @@
 import { View, Text, FlatList, StyleSheet, Dimensions } from "react-native"
 import React from "react"
 import Slide from "./Slide"
-
-const data = [
-    {
-        id: "1",
-        title: "Manga 1",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-        image: require("../assets/manga-1.png"),
-    },
-    {
-        id: "2",
-        title: "Manga 2",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-        image: require("../assets/manga-2.png"),
-    },
-    {
-        id: "3",
-        title: "Manga 3",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-        image: require("../assets/manga-3.png"),
-    },
-]
+import { useSelector } from "react-redux"
 
 const width = Dimensions.get("window").width
 
-export default function Carousel() {
+export default function Carousel({ navigation }) {
+    const storeComics = useSelector((state) => state.comics)    
+
     return (
         <>
             <FlatList
-                data={data}
+                data={storeComics.comics?.response}
                 nestedScrollEnabled={true}
                 width={width - 10}
                 maxHeight={500}
@@ -44,7 +23,7 @@ export default function Carousel() {
                     <View style={styles.wrapper}>
                         <Slide
                             title={item.title}
-                            image={item.image}
+                            image={item.photo}
                             description={item.description}
                         />
                         <View style={styles.textContainer}>
@@ -55,7 +34,7 @@ export default function Carousel() {
                         </View>
                     </View>
                 )}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
             />
         </>
     )

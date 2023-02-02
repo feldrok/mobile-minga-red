@@ -8,7 +8,7 @@ import {
     SafeAreaView,
 } from "react-native"
 import { Icon } from "@rneui/themed"
-import React, { useEffect } from "react"
+import React from "react"
 import BottomContainer from "../components/BottomContainer"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { useDispatch, useSelector } from "react-redux"
@@ -18,16 +18,20 @@ const { getFavouriteComics } = comicActions
 
 export default function Favourites({ navigation }) {
     const [text, setText] = React.useState("")
+    const storeUser = useSelector((state) => state.user)
     const storeCategories = useSelector((state) => state.categories)
     const dispatch = useDispatch()
-
+    
     const filterComics = () => {
         dispatch(
             getFavouriteComics({
-                user_id: "63c5a72e3395adc7174cea60",
+                user_id: storeUser.user?.response?.user?.id,
                 limit: 4,
                 title: text,
-                category_id: storeCategories.activeCategory !== "all" ? storeCategories.activeCategory : "",
+                category_id:
+                    storeCategories.activeCategory !== "all"
+                        ? storeCategories.activeCategory
+                        : "",
             })
         )
     }
