@@ -76,6 +76,9 @@ export default function DrawerNavigation() {
                     <Drawer.Screen
                         name="Login"
                         component={Login}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
                 </>
             )
