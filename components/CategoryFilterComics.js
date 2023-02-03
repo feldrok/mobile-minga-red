@@ -1,11 +1,13 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import React, { useEffect } from "react"
+import React, { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import categoryActions from "../store/categories/actions"
 import comicActions from "../store/comics/actions"
+import { useFocusEffect } from "@react-navigation/native"
+
 
 const { getCategories, setActiveCategory } = categoryActions
-const { getFavouriteComics } = comicActions
+const { getComics } = comicActions
 
 const colors = [
     "#ffe0df",
@@ -24,30 +26,30 @@ const textColors = [
     "#f7b500",
 ]
 
-export default function CategoryFilters() {
-    const storeComics = useSelector((state) => state.comics)
-    const storeCategories = useSelector((state) => state.categories)
+export default function CategoryFilterComics() {
+    const storeComics = useSelector((store) => store.comics)
+    const storeCategories = useSelector((store) => store.categories)
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        dispatch(getCategories())
-    }, [])
+    useFocusEffect(useCallback(() => {
+        if(storeCategories.categories?.response?.length === undefined){
+            dispatch(getCategories())
+        }
+    }, [] ))
 
     const showAllComics = () => {
-        dispatch(getFavouriteComics({
-            user_id: "63c5a72e3395adc7174cea60",
-            limit: 10,
+        dispatch(setActiveCategory("all"))
+        dispatch(getComics({
+            limit: "",
             title: "",
             category_id: "",
         }))
-        dispatch(setActiveCategory("all"))
     }
 
     const showComicsByCategory = (category_id) => {
-        dispatch(getFavouriteComics({
-            user_id: "63c5a72e3395adc7174cea60",
+        dispatch(getComics({
             limit: 10,
-            title: storeComics.comics.activeSearch,
+            title: storeComics?.comics?.activeSearch,
             category_id: category_id,
         }))
         dispatch(setActiveCategory(category_id))
@@ -66,7 +68,7 @@ export default function CategoryFilters() {
                         {
                             backgroundColor:
                                 colors[
-                                    storeCategories.categories?.response?.indexOf(
+                                    storeCategories?.categories?.response?.indexOf(
                                         category
                                     )
                                 ],
@@ -100,13 +102,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         flexWrap: "wrap",
-        width: "80%",
+        width: "100%",
     },
     category: {
-        padding: 10,
         margin: 5,
         borderRadius: 20,
-        width: 80,
+        width: 55,
+        height: 30,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -115,12 +117,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 3,
         elevation: 3,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
     },
     categoryAll: {
-        padding: 10,
         margin: 5,
         borderRadius: 20,
-        width: 80,
+        width: 55,
+        height: 30,
         backgroundColor: "#e0e0e0",
         shadowColor: "#000",
         shadowOffset: {
@@ -130,6 +135,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 3,
         elevation: 3,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
     },
     categoryText: {
         textAlign: "center",

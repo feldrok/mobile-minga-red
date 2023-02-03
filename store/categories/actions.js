@@ -14,7 +14,7 @@ const handleToken = () => {
 
 const getCategories = createAsyncThunk("getCategories", async () => {
     try {
-        let response = await axios.get(`${API_URL}/api/categories`, handleToken())
+        let response = await axios.get(`${API_URL}/api/categories`, await handleToken())
         return {
             response: { categories: response.data },
             message: "Categories obtained",

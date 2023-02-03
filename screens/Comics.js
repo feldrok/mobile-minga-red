@@ -8,50 +8,50 @@ import {
     SafeAreaView,
 } from "react-native"
 import { Icon } from "@rneui/themed"
-import React, { useEffect } from "react"
-import BottomContainer from "../components/BottomContainer"
+import React, { useCallback, useEffect } from "react"
+import BottomContainerComics from "../components/BottomContainerComics"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { useDispatch, useSelector } from "react-redux"
 import comicActions from "../store/comics/actions"
+import { useFocusEffect } from "@react-navigation/native"
+import categoryActions from "../store/categories/actions"
 
-const { getFavouriteComics } = comicActions
+const { getComics } = comicActions
+const { getCategories } = categoryActions
 
-export default function Favourites({ navigation }) {
+export default function Comics() {
     const [text, setText] = React.useState("")
-    const storeCategories = useSelector((state) => state.categories)
+    const storeCategories = useSelector((store) => store.categories)
+    const storeComics = useSelector((store) => store.comics)
     const dispatch = useDispatch()
 
     const filterComics = () => {
-        dispatch(
-            getFavouriteComics({
-                user_id: "63c5a72e3395adc7174cea60",
-                limit: 4,
-                title: text,
-                category_id: storeCategories.activeCategory !== "all" ? storeCategories.activeCategory : "",
-            })
-        )
+        dispatch(getComics({
+            limit: 10,
+            title: text,
+            category_id: storeCategories.activeCategory !== "all" ? storeCategories.activeCategory : "",
+        }))
     }
-
     return (
         <SafeAreaView>
             <GestureHandlerRootView>
                 <View style={styles.container}>
                     <ImageBackground
-                        source={require("../assets/favouritesBg.png")}
+                        source={require("../assets/comicsbg.png")}
                         style={styles.background}
                     >
-                        <Text style={styles.headerText}>Favourites</Text>
+                        <Text style={styles.headerText}>Comics</Text>
                         <View style={styles.inputContainer}>
                             <Icon name="search" size={30} color="#4338CA" />
                             <TextInput
                                 onChangeText={(text) => setText(text)}
                                 onSubmitEditing={filterComics}
                                 style={styles.searchInput}
-                                placeholder="Find your favourite manga"
+                                placeholder="Find your comics here"
                             />
                         </View>
                     </ImageBackground>
-                    <BottomContainer />
+                    <BottomContainerComics />
                 </View>
             </GestureHandlerRootView>
         </SafeAreaView>
@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "white",
         margin: 20,
-        paddingTop: 100,
+        paddingTop: 90,
     },
     inputContainer: {
         backgroundColor: "white",
         borderRadius: 40,
-        padding: 10,
+        padding: 5,
         margin: 10,
         display: "flex",
         flexDirection: "row",
@@ -91,9 +91,9 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         width: 300,
-        height: 60,
+        height: 40,
         borderRadius: 40,
-        padding: 15,
+        padding: 10,
         fontSize: 20,
     },
 })

@@ -5,10 +5,9 @@ import {
     StyleSheet,
     Dimensions,
 } from "react-native"
-import React, { useCallback, useEffect } from "react"
-import CategoryFilters from "../components/CategoryFilters"
-import ComicCard from "../components/ComicCard"
-import { Icon } from "@rneui/themed"
+import React, { useCallback } from "react"
+import CategoryFilterComics from "./CategoryFilterComics"
+import ComicsCard from "./ComicsCard"
 import {
     FlatList,
     Gesture,
@@ -23,8 +22,10 @@ import Animated, {
 } from "react-native-reanimated"
 import { useDispatch, useSelector } from "react-redux"
 import comicActions from "../store/comics/actions"
+import ExploreCardsComics from "./ExploreCardsComics"
+import { useFocusEffect } from "@react-navigation/native"
 
-const { getComics, getFavouriteComics } = comicActions
+const { getComics } = comicActions
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.765
@@ -38,12 +39,10 @@ const colors = [
     "#f7b500",
 ]
 
-export default function BottomContainer() {
-    const storeCategories = useSelector((state) => state.categories)
-    const storeComics = useSelector((state) => state.comics)
+export default function BottomContainerComics() {
+    const storeCategories = useSelector((store) => store.categories)
+    const storeComics = useSelector((store) => store.comics)
     const dispatch = useDispatch()
-    const [sort, setSort] = React.useState(false)
-
     const translateY = useSharedValue(0)
     const context = useSharedValue({ y: 0 })
 
@@ -91,41 +90,36 @@ export default function BottomContainer() {
         }
     })
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         scrollTo(-SCREEN_HEIGHT / 3)
-        if (storeComics.comics.length === 0) {
-            dispatch(
-                getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
-                    limit: 4,
-                })
-            )
+        if (storeComics.comics.response?.length === undefined) {
+            dispatch(getComics({
+                limit: "",
+                title: "",
+                category_id: "",
+            }))
         }
-    }, [])
+    }, []))
 
     const handleLoadMore = () => {
-        const limit = storeComics.comics?.response?.length
+        const limit = storeComics?.comics?.response.length
         if (storeCategories.activeCategory === "all") {
             if (limit >= 4) {
                 dispatch(
-                    getFavouriteComics({
-                        user_id: "63c5a72e3395adc7174cea60",
+                    getComics({
                         limit: limit + 4,
                         title: "",
                         category_id: "",
-                        order: sort === false ? "asc" : "desc",
                     })
                 )
             }
         } else {
             if (limit >= 4) {
                 dispatch(
-                    getFavouriteComics({
-                        user_id: "63c5a72e3395adc7174cea60",
+                    getComics({
                         limit: limit + 4,
                         title: "",
-                        category_id: storeCategories.activeCategory,
-                        order: sort === false ? "asc" : "desc",
+                        category_id: storeCategories?.activeCategory,
                     })
                 )
             }
@@ -144,38 +138,6 @@ export default function BottomContainer() {
         }
     }
 
-    const handleSort = () => {
-        if (sort === true) {
-            setSort(false)
-            dispatch(
-                getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
-                    limit: 4,
-                    title: "",
-                    category_id:
-                        storeCategories.activeCategory !== "all"
-                            ? storeCategories.activeCategory
-                            : "",
-                    order: "asc",
-                })
-            )
-        } else {
-            setSort(true)
-            dispatch(
-                getFavouriteComics({
-                    user_id: "63c5a72e3395adc7174cea60",
-                    limit: 4,
-                    title: "",
-                    category_id:
-                        storeCategories.activeCategory !== "all"
-                            ? storeCategories.activeCategory
-                            : "",
-                    order: "desc",
-                })
-            )
-        }
-    }
-
     return (
         <Animated.View style={[rBottomSheetStyle, styles.container]}>
             <GestureDetector gesture={gesture}>
@@ -183,13 +145,14 @@ export default function BottomContainer() {
                     <View style={styles.containerHandle} />
                 </View>
             </GestureDetector>
+            <View style={styles.exploreContainer}>
+                <ExploreCardsComics />
+            </View>
             <View style={styles.buttonsContainer}>
-                <CategoryFilters />
+                <CategoryFilterComics />
                 <TouchableOpacity
                     style={styles.filterButton}
-                    onPress={handleSort}
                 >
-                    <Icon name="sort" size={30} color="#4338CA" />
                 </TouchableOpacity>
             </View>
             <FlatList
@@ -203,7 +166,7 @@ export default function BottomContainer() {
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <ComicCard
+                    <ComicsCard
                         title={item?.title}
                         category={item?.category_id}
                         image={item?.photo}
@@ -259,6 +222,11 @@ const styles = StyleSheet.create({
         right: 0,
     },
     scrollView: {
-        width: "100%",
+        width: "80%",
     },
+    exploreContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+    }
 })

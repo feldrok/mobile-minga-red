@@ -12,7 +12,13 @@ const handleToken = () => {
     return config
 }
 
-const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "", category_id = "" }) => {
+const getComics = createAsyncThunk("getComics", async ({ limit, title, category_id}) => {
+    if(title === undefined){
+        title = ""
+    }
+    if(category_id === undefined){
+        category_id = ""
+    }
     try {
         let response = await axios.get(
             `${API_URL}/api/comics?title=${title}&category_id=${category_id}&limit=${limit}`,
@@ -21,6 +27,7 @@ const getComics = createAsyncThunk("getComics", async ({ limit = 10, title = "",
         return {
             response: { comics: response.data },
             limit: limit,
+            activeSearch: title,
             message: "Comics obtained",
         }
     } catch (error) {

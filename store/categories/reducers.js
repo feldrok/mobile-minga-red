@@ -28,7 +28,7 @@ const categoryReducer = createReducer(initialState, (builder) => {
         })
         .addCase(getCategories.rejected, (state, action) => {
             let newState = {
-                message: "error",
+                message: "error categories",
             }
             return newState
         })

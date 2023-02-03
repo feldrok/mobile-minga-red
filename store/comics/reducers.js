@@ -33,6 +33,12 @@ const comicReducer = createReducer(initialState, (builder) => {
       }
       return newState
     })
+    .addCase(getComics.rejected, (state, action) => {
+      let newState = {
+          message: "error comics",
+      }
+      return newState
+  })
 
 })
 

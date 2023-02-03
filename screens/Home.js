@@ -8,7 +8,6 @@ import {
     Dimensions,
 } from "react-native"
 import React from "react"
-import ExploreCards from "../components/ExploreCards"
 import Carousel from "../components/Carousel"
 
 const height = Dimensions.get("window").height
@@ -64,9 +63,6 @@ export default function Home({ navigation }) {
                 </View>
             </ImageBackground>
             <View style={styles.bodyContainer}>
-                <View style={styles.exploreContainer}>
-                    <ExploreCards />
-                </View>
                 <View style={styles.trendingContainer}>
                     <Text style={styles.trendingTitle}>Trending Manga</Text>
                     <Carousel />
